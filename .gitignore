@@ -1,57 +1,8 @@
-# Byte-compiled / optimized
+oncall_agent_data/
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
-
-# Distribution / packaging
+*.pyc
+.venv/
+.env
+*.egg-info/
 build/
 dist/
-*.egg-info/
-*.egg
-wheels/
-pip-wheel-metadata/
-
-# Virtual environments
-.venv/
-venv/
-env/
-ENV/
-
-# uv / pip
-.uv/
-pip-log.txt
-
-# Testing & coverage
-.pytest_cache/
-.coverage
-.coverage.*
-htmlcov/
-.tox/
-.nox/
-coverage.xml
-*.cover
-
-# Type checkers / linters
-.mypy_cache/
-.pyright/
-.ruff_cache/
-.dmypy.json
-
-# Editors / IDEs
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Secrets / local config
-.env
-.env.*
-!.env.example
-
-# Logs
-*.log
