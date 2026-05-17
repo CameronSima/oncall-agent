@@ -53,6 +53,10 @@ root.
 ```bash
 # From the project root (the directory that contains pyproject.toml):
 pip install -e .
+pip install -r requirements.txt      # runtime deps
+pip install -r requirements-dev.txt  # + pytest, for running the test suite
+pip install -e .                     # registers the `oncall-agent` CLI
+
 export ANTHROPIC_API_KEY=...
 
 # Live demo: run a single incident; you'll be prompted to approve the action.
@@ -80,11 +84,27 @@ python -m oncall_agent bench
   exact-root-cause match, false-cause rate, mean tool calls to resolution, and
   $/incident."
 
+## Eval set (N=20)
+
+The eval set covers three buckets so the agent can't pass just by reverting:
+
+| Bucket | Count | Right action | Examples |
+| --- | --- | --- | --- |
+| Deploy-correlated reverts | 8 | `revert_deploy` | memory leak, bad deploy 500s, CPU regex, log explosion, N+1, cache disabled, goroutine leak, canary-only, broken flag |
+| Infrastructure / external | 7 | `page_team` / `engage_db_oncall` | slow DB, payments timeout, DNS failure, upstream 429s, TLS expired, disk full, region outage |
+| Tricky / red herrings | 5 | varies — including `noop` | coincidental deploy (docs only), hourly cron burst (alert misconfigured), retry storm from upstream, replica-down-but-redundant |
+
+Backing modes:
+- `bug_flag` scenarios drive the FastAPI orders service with synthetic traffic and inject real bugs (memory leak etc.).
+- `fixture` scenarios populate metrics/logs/deploys declaratively from `incidents/fixtures.py` — for incident shapes the toy app can't reproduce (DNS, region, N+1, etc.).
+
+Recovery (`recovered_pct` in the bench) is only verifiable for `bug_flag` scenarios. Fixture scenarios honestly report `recovered=None` instead of claiming false recovery.
+
 ## Status
 
 - [x] Layer interfaces + in-memory observability
 - [x] FastAPI orders service with injectable bugs
-- [x] Four end-to-end scenarios with ground-truth root causes AND actions
+- [x] **20 scenarios** with ground-truth root causes and structured actions
 - [x] Agent loop with tool use and prompt caching
 - [x] Episodic memory (keyword retrieval over past incidents)
 - [x] Eval harness with LLM-as-judge scoring + action-correctness scoring
@@ -94,4 +114,3 @@ python -m oncall_agent bench
 - [ ] Real Prometheus + Loki adapters
 - [ ] Slack app (currently writes to `slack.jsonl`)
 - [ ] Embedding-based episodic memory (currently keyword scoring)
-- [ ] 16 more scenarios to reach N=20 for credible eval headlines
