@@ -45,18 +45,26 @@ Surrounding scaffolding (not part of the agent, but needed for a realistic demo)
 
 ## Running
 
+The CLI lives at `oncall_agent.cli`. You need to install the package into your
+environment first — otherwise `python -m oncall_agent ...` will fail with
+`No module named oncall_agent` unless you happen to be standing in the project
+root.
+
 ```bash
+# From the project root (the directory that contains pyproject.toml):
 pip install -e .
 export ANTHROPIC_API_KEY=...
 
 # Live demo: run a single incident; you'll be prompted to approve the action.
-python -m oncall_agent.cli run memory_leak
+python -m oncall_agent run memory_leak           # via __main__.py
+python -m oncall_agent.cli run memory_leak       # equivalent
+oncall-agent run memory_leak                     # console script entry point
 
 # Run unattended with an auto-approve-low-risk policy.
-python -m oncall_agent.cli run memory_leak --consent auto-low-risk
+python -m oncall_agent run memory_leak --consent auto-low-risk
 
 # Run the full eval suite (uses auto-low-risk consent + LLM-as-judge scoring).
-python -m oncall_agent.cli bench
+python -m oncall_agent bench
 ```
 
 ## What an interview talking point sounds like
